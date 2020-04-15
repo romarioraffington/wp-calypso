@@ -11,8 +11,9 @@ import page from 'page';
  */
 import DocumentHead from 'components/data/document-head';
 import QueryJetpackScanHistory from 'components/data/query-jetpack-scan-history';
-import ScanHistoryItem from '../../../components/scan-history-item';
+import ScanHistoryItem from 'landing/jetpack-cloud/components/scan-history-item';
 import SimplifiedSegmentedControl from 'components/segmented-control/simplified';
+import { recordTracksEvent } from 'state/analytics/actions';
 import { getSelectedSiteSlug, getSelectedSiteId } from 'state/ui/selectors';
 import Main from 'components/main';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
@@ -25,7 +26,7 @@ import './style.scss';
 const filterOptions = [
 	{ value: 'all', label: 'All' },
 	{ value: 'fixed', label: 'Fixed' },
-	{ value: 'ignored', label: 'Ignored' },
+	{ value: 'ignored', label: 'Ignored' }
 ];
 
 const scanEntries = [
@@ -41,8 +42,8 @@ const scanEntries = [
 				'Jetpack has detected code that is often used in web-based "shell" programs. If you believe the file(s) have been infected they need to be cleaned.',
 			fix:
 				'To fix this threat, Jetpack deleted the file, since it’s not a part of the original WordPress.',
-			details: 'This threat was found in the file: /htdocs/sx--a4bp.php',
-		},
+			details: 'This threat was found in the file: /htdocs/sx--a4bp.php'
+		}
 	},
 	{
 		id: 2,
@@ -57,8 +58,8 @@ const scanEntries = [
 				'Jetpack has detected code that is often used in web-based "shell" programs. If you believe the file(s) have been infected they need to be cleaned.',
 			fix:
 				'To fix this threat, Jetpack deleted the file, since it’s not a part of the original WordPress.',
-			details: 'This threat was found in the file: /htdocs/sx--a4bp.php',
-		},
+			details: 'This threat was found in the file: /htdocs/sx--a4bp.php'
+		}
 	},
 	{
 		id: 3,
@@ -73,8 +74,8 @@ const scanEntries = [
 				'Jetpack has detected code that is often used in web-based "shell" programs. If you believe the file(s) have been infected they need to be cleaned.',
 			fix:
 				'To fix this threat, Jetpack deleted the file, since it’s not a part of the original WordPress.',
-			details: 'This threat was found in the file: /htdocs/sx--a4bp.php',
-		},
+			details: 'This threat was found in the file: /htdocs/sx--a4bp.php'
+		}
 	},
 	{
 		id: 4,
@@ -88,8 +89,8 @@ const scanEntries = [
 				'Jetpack has detected code that is often used in web-based "shell" programs. If you believe the file(s) have been infected they need to be cleaned.',
 			fix:
 				'To fix this threat, Jetpack deleted the file, since it’s not a part of the original WordPress.',
-			details: 'This threat was found in the file: /htdocs/sx--a4bp.php',
-		},
+			details: 'This threat was found in the file: /htdocs/sx--a4bp.php'
+		}
 	},
 	{
 		id: 5,
@@ -104,9 +105,9 @@ const scanEntries = [
 				'Jetpack has detected code that is often used in web-based "shell" programs. If you believe the file(s) have been infected they need to be cleaned.',
 			fix:
 				'To fix this threat, Jetpack deleted the file, since it’s not a part of the original WordPress.',
-			details: 'This threat was found in the file: /htdocs/sx--a4bp.php',
-		},
-	},
+			details: 'This threat was found in the file: /htdocs/sx--a4bp.php'
+		}
+	}
 ];
 
 class ScanHistoryPage extends Component {
@@ -119,12 +120,16 @@ class ScanHistoryPage extends Component {
 		return filterOptions[ 0 ];
 	};
 
-	handleOnFilterChange = ( filter ) => {
-		const { siteSlug } = this.props;
+	handleOnFilterChange = filter => {
+		const { siteSlug, siteId, dispatchRecordTracksEvent } = this.props;
 		let filterValue = filter.value;
 		if ( 'all' === filterValue ) {
 			filterValue = '';
 		}
+		dispatchRecordTracksEvent( 'calypso_scan_history_filter_update', {
+			site_id: siteId,
+			filter: filterValue
+		} );
 		page.show( `/scan/history/${ siteSlug }/${ filterValue }` );
 	};
 
@@ -134,7 +139,7 @@ class ScanHistoryPage extends Component {
 		if ( filter === 'all' ) {
 			return logEntries;
 		}
-		return logEntries.filter( ( entry ) => entry.action === filter );
+		return logEntries.filter( entry => entry.action === filter );
 	}
 
 	render() {
@@ -160,7 +165,7 @@ class ScanHistoryPage extends Component {
 					/>
 				</div>
 				<div className="history__entries">
-					{ logEntries.map( ( entry ) => (
+					{ logEntries.map( entry => (
 						<ScanHistoryItem entry={ entry } key={ entry.id } />
 					) ) }
 				</div>
@@ -169,15 +174,18 @@ class ScanHistoryPage extends Component {
 	}
 }
 
-export default connect( ( state ) => {
-	const siteId = getSelectedSiteId( state );
+export default connect(
+	state => {
+		const siteId = getSelectedSiteId( state );
 
-	// TODO: Get state from actual API.
-	const scanHistoryLogEntries = scanEntries;
+		// TODO: Get state from actual API.
+		const scanHistoryLogEntries = scanEntries;
 
-	return {
-		siteId,
-		siteSlug: getSelectedSiteSlug( state ),
-		logEntries: scanHistoryLogEntries,
-	};
-} )( ScanHistoryPage );
+		return {
+			siteId,
+			siteSlug: getSelectedSiteSlug( state ),
+			logEntries: scanHistoryLogEntries
+		};
+	},
+	{ dispatchRecordTracksEvent: recordTracksEvent }
+)( ScanHistoryPage );

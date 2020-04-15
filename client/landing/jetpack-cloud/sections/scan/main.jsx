@@ -21,6 +21,7 @@ import SidebarNavigation from 'my-sites/sidebar-navigation';
 import { getSelectedSite, getSelectedSiteSlug } from 'state/ui/selectors';
 import getSiteScanState from 'state/selectors/get-site-scan-state';
 import { withLocalizedMoment } from 'components/localized-moment';
+import { recordTracksEvent } from 'state/analytics/actions';
 
 /**
  * Style dependencies
@@ -29,7 +30,7 @@ import './style.scss';
 
 class ScanPage extends Component {
 	renderScanOkay() {
-		const { siteSlug, moment, lastScanTimestamp } = this.props;
+		const { site, siteSlug, moment, lastScanTimestamp, dispatchRecordTracksEvent } = this.props;
 
 		return (
 			<>
@@ -41,7 +42,16 @@ class ScanPage extends Component {
 					Run a manual scan now or wait for Jetpack to scan your site later today.
 				</p>
 				{ isEnabled( 'jetpack-cloud/on-demand-scan' ) && (
-					<Button primary href={ `/scan/${ siteSlug }` } className="scan__button">
+					<Button
+						primary
+						href={ `/scan/${ siteSlug }` }
+						className="scan__button"
+						onClick={ () =>
+							dispatchRecordTracksEvent( 'calypso_scan_run', {
+								site_id: site.ID
+							} )
+						}
+					>
 						{ translate( 'Scan now' ) }
 					</Button>
 				) }
@@ -68,7 +78,7 @@ class ScanPage extends Component {
 	}
 
 	renderScanError() {
-		const { siteSlug } = this.props;
+		const { site, siteSlug, dispatchRecordTracksEvent } = this.props;
 
 		return (
 			<>
@@ -83,11 +93,16 @@ class ScanPage extends Component {
 					primary
 					target="_blank"
 					rel="noopener noreferrer"
-					href={ `https://jetpack.com/contact-support/?scan-state=error&site-slug=${ siteSlug }` }
 					className="scan__button"
+					href={ `https://jetpack.com/contact-support/?scan-state=error&site-slug=${ siteSlug }` }
+					onClick={ () =>
+						dispatchRecordTracksEvent( 'calypso_scan_error_contact_support', {
+							site_id: site.ID
+						} )
+					}
 				>
 					{ translate( 'Contact Support {{externalIcon/}}', {
-						components: { externalIcon: <Gridicon icon="external" size={ 24 } /> },
+						components: { externalIcon: <Gridicon icon="external" size={ 24 } /> }
 					} ) }
 				</Button>
 			</>
@@ -129,7 +144,7 @@ class ScanPage extends Component {
 					stats={ [
 						{ name: 'Files', number: 1201 },
 						{ name: 'Plugins', number: 4 },
-						{ name: 'Themes', number: 3 },
+						{ name: 'Themes', number: 3 }
 					] }
 					noticeText="Failing to plan is planning to fail. Regular backups ensure that should the worst happen, you are prepared. Jetpack Backup has you covered."
 					noticeLink="https://jetpack.com/upgrade/backup"
@@ -139,18 +154,21 @@ class ScanPage extends Component {
 	}
 }
 
-export default connect( ( state ) => {
-	const site = getSelectedSite( state );
-	const siteSlug = getSelectedSiteSlug( state );
-	const scanState = getSiteScanState( state, site.ID );
-	const lastScanTimestamp = Date.now() - 5700000; // 1h 35m.
-	const nextScanTimestamp = Date.now() + 5700000;
+export default connect(
+	state => {
+		const site = getSelectedSite( state );
+		const siteSlug = getSelectedSiteSlug( state );
+		const scanState = getSiteScanState( state, site.ID );
+		const lastScanTimestamp = Date.now() - 5700000; // 1h 35m.
+		const nextScanTimestamp = Date.now() + 5700000;
 
-	return {
-		site,
-		siteSlug,
-		scanState,
-		lastScanTimestamp,
-		nextScanTimestamp,
-	};
-} )( withLocalizedMoment( ScanPage ) );
+		return {
+			site,
+			siteSlug,
+			scanState,
+			lastScanTimestamp,
+			nextScanTimestamp
+		};
+	},
+	{ dispatchRecordTracksEvent: recordTracksEvent }
+)( withLocalizedMoment( ScanPage ) );
