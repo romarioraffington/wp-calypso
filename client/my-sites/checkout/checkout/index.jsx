@@ -579,7 +579,7 @@ export class Checkout extends React.Component {
 			pendingOrReceiptId,
 			shouldHideUpsellNudges
 		);
-		
+
 		if ( redirectPathForConciergeUpsell ) {
 			return redirectPathForConciergeUpsell;
 		}
