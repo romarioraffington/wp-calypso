@@ -36,6 +36,7 @@ import SidebarNavigation from 'my-sites/sidebar-navigation';
 import getActivityLogFilter from 'state/selectors/get-activity-log-filter';
 import ActivityCardList from 'landing/jetpack-cloud/components/activity-card-list';
 import MissingCredentialsWarning from '../../components/missing-credentials';
+import getSiteUrl from 'state/sites/selectors/get-site-url';
 import getDoesRewindNeedCredentials from 'state/selectors/get-does-rewind-need-credentials.js';
 import getSiteGmtOffset from 'state/selectors/get-site-gmt-offset';
 import getSiteTimezoneValue from 'state/selectors/get-site-timezone-value';
@@ -157,6 +158,7 @@ class BackupsPage extends Component {
 			logs,
 			moment,
 			siteId,
+			siteUrl,
 			siteSlug,
 			isLoadingBackups,
 			oldestDateAvailable,
@@ -200,6 +202,7 @@ class BackupsPage extends Component {
 					<>
 						<DailyBackupStatus
 							allowRestore={ allowRestore }
+							siteUrl={ siteUrl }
 							siteSlug={ siteSlug }
 							backup={ backupsOnSelectedDate.lastBackup }
 							lastDateAvailable={ lastDateAvailable }
@@ -343,6 +346,7 @@ const mapStateToProps = ( state ) => {
 		logs: logs?.data ?? [],
 		rewind,
 		siteId,
+		siteUrl: getSiteUrl( state, siteId ),
 		siteSlug: getSelectedSiteSlug( state ),
 		timezone,
 		gmtOffset,
