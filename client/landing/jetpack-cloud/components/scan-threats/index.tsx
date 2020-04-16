@@ -46,11 +46,12 @@ const ScanThreats = ( { site, threats }: Props ) => {
 	const openFixAllThreatsDialog = React.useCallback( () => {
 		dispatch(
 			recordTracksEvent( `calypso_scan_all_threats_dialog_open`, {
-				site_id: site.ID
+				site_id: site.ID,
+				numberOfThreats: threats.length
 			} )
 		);
 		setShowFixAllThreatsDialog( true );
-	}, [ dispatch, site ] );
+	}, [ dispatch, site, threats ] );
 
 	const openDialog = React.useCallback(
 		( action: ThreatAction, threat: Threat ) => {
