@@ -301,7 +301,7 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 				config.isEnabled( 'gutenboarding' ) && urlParams.has( 'is-gutenboarding' );
 			ports[ 0 ].postMessage( {
 				isGutenboarding,
-				frankenflowUrl: `${ window.location.origin }/start/frankenflow?siteSlug=${ this.props.siteId }`,
+				frankenflowUrl: `${ window.location.origin }/start/new-launch?siteSlug=${ this.props.siteId }`,
 			} );
 		}
 
