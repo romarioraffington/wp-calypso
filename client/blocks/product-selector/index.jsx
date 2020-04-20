@@ -499,6 +499,22 @@ export class ProductSelector extends Component {
 		return null;
 	}
 
+	getPromo() {
+		return (
+			<ProductCardPromoNudge
+				badgeText={ this.props.translate( 'Up to %(discount)s off!', {
+					args: { discount: '70%' },
+				} ) }
+				text={ this.props.translate(
+					'Hurry, these are {{strong}}Limited time introductory prices!{{/strong}}',
+					{
+						components: { strong: <strong /> },
+					}
+				) }
+			/>
+		);
+	}
+
 	renderProducts() {
 		const {
 			fetchingPlans,
@@ -508,7 +524,6 @@ export class ProductSelector extends Component {
 			products,
 			selectedSiteSlug,
 			storeProducts,
-			translate,
 		} = this.props;
 
 		if ( isEmpty( storeProducts ) || fetchingSitePurchases || fetchingSitePlans || fetchingPlans ) {
@@ -579,9 +594,13 @@ export class ProductSelector extends Component {
 					purchase={ purchase }
 					subtitle={ this.getSubtitleByProduct( product ) }
 				>
-					{ hasProductPurchase && isCurrent && this.renderManageButton( product, purchase ) }
-					{ ! hasProductPurchase && ! isCurrent && (
+					{ selectedSiteSlug &&
+						hasProductPurchase &&
+						isCurrent &&
+						this.renderManageButton( product, purchase ) }
+					{ ! selectedSiteSlug && product.id === 'jetpack_search' && (
 						<Fragment>
+<<<<<<< HEAD
 							{ product.hasPromo && (
 								<ProductCardPromoNudge
 									badgeText={ translate( 'Up to %(discount)s off!', {
@@ -606,9 +625,30 @@ export class ProductSelector extends Component {
 								forceRadiosEvenIfOnlyOneOption={ !! product.forceRadios }
 							/>
 
+=======
+							{ product.hasPromo && this.getPromo() }
+>>>>>>> Plans: adapt the Search card copy when no site info is present.
 							{ this.renderCheckoutButton( product ) }
 						</Fragment>
 					) }
+					{ ( selectedSiteSlug || ( ! selectedSiteSlug && product.id !== 'jetpack_search' ) ) &&
+						! hasProductPurchase &&
+						! isCurrent && (
+							<Fragment>
+								{ product.hasPromo && this.getPromo() }
+								<ProductCardOptions
+									optionsLabel={ optionsLabel }
+									options={ this.getProductOptions( product ) }
+									selectedSlug={ selectedSlug }
+									handleSelect={ productSlug =>
+										this.handleProductOptionSelect( stateKey, productSlug, product.id )
+									}
+									forceRadiosEvenIfOnlyOneOption={ !! product.forceRadios }
+								/>
+
+								{ this.renderCheckoutButton( product ) }
+							</Fragment>
+						) }
 				</ProductCard>
 			);
 		} );
