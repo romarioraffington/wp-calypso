@@ -62,12 +62,12 @@ export class ProductSelector extends Component {
 					PropTypes.oneOfType( [ PropTypes.string, PropTypes.element ] )
 				),
 				optionsLabel: PropTypes.string,
-				optionsLabelCallback: PropTypes.func,
+				optionsLabelCallback: PropTypes.func
 			} )
 		).isRequired,
 		productPriceMatrix: PropTypes.shape( {
 			relatedProduct: PropTypes.string,
-			ratio: PropTypes.number,
+			ratio: PropTypes.number
 		} ),
 		siteId: PropTypes.number,
 		onUpgradeClick: PropTypes.func,
@@ -90,11 +90,11 @@ export class ProductSelector extends Component {
 		translate: PropTypes.func.isRequired,
 
 		// From withLocalizedMoment() HoC
-		moment: PropTypes.func.isRequired,
+		moment: PropTypes.func.isRequired
 	};
 
 	static defaultProps = {
-		productPriceMatrix: {},
+		productPriceMatrix: {}
 	};
 
 	constructor( props ) {
@@ -109,7 +109,7 @@ export class ProductSelector extends Component {
 					acc[ this.getStateKey( product.id, interval ) ] = slugs[ slugs.length - 1 ];
 				} );
 				return acc;
-			}, {} ),
+			}, {} )
 		};
 	}
 
@@ -135,7 +135,7 @@ export class ProductSelector extends Component {
 
 		return find(
 			purchases,
-			( purchase ) =>
+			purchase =>
 				purchase.active &&
 				( includes( productSlugs, purchase.productSlug ) ||
 					includes( productSlugs, this.getRelatedYearlyProductSlug( purchase.productSlug ) ) ||
@@ -152,7 +152,7 @@ export class ProductSelector extends Component {
 
 		return find(
 			purchases,
-			( purchase ) => purchase.active && purchase.productSlug === currentPlanSlug
+			purchase => purchase.active && purchase.productSlug === currentPlanSlug
 		);
 	}
 
@@ -160,7 +160,7 @@ export class ProductSelector extends Component {
 		const { currentPlanSlug, productSlugs } = this.props;
 		return ! currentPlanSlug
 			? null
-			: filter( productSlugs, ( productSlug ) => planHasFeature( currentPlanSlug, productSlug ) );
+			: filter( productSlugs, productSlug => planHasFeature( currentPlanSlug, productSlug ) );
 	}
 
 	currentPlanIncludesProduct( product ) {
@@ -168,13 +168,13 @@ export class ProductSelector extends Component {
 		const productSlugs = this.getProductSlugsForCurrentPlan();
 		return ! currentPlanSlug || ! productSlugs
 			? false
-			: productSlugs.some( ( slug ) => product.slugs.includes( slug ) );
+			: productSlugs.some( slug => product.slugs.includes( slug ) );
 	}
 
 	getProductSlugByCurrentPlan( product ) {
 		return ! this.props.currentPlanSlug
 			? null
-			: find( product.slugs, ( slug ) => planHasFeature( this.props.currentPlanSlug, slug ) );
+			: find( product.slugs, slug => planHasFeature( this.props.currentPlanSlug, slug ) );
 	}
 
 	getSubtitleByProduct( product ) {
@@ -184,11 +184,11 @@ export class ProductSelector extends Component {
 		if ( currentPlan && this.currentPlanIncludesProduct( product ) ) {
 			return translate( 'Included in your {{planLink}}%(planName)s plan{{/planLink}}', {
 				args: {
-					planName: currentPlan.getTitle(),
+					planName: currentPlan.getTitle()
 				},
 				components: {
-					planLink: <a href={ `/plans/my-plan/${ selectedSiteSlug }` } />,
-				},
+					planLink: <a href={ `/plans/my-plan/${ selectedSiteSlug }` } />
+				}
 			} );
 		}
 
@@ -228,6 +228,15 @@ export class ProductSelector extends Component {
 		const planProductSlug = this.getProductSlugByCurrentPlan( product );
 		if ( planProductSlug && optionDescriptions && optionDescriptions[ planProductSlug ] ) {
 			return optionDescriptions[ planProductSlug ];
+		}
+
+		// Plans landing page at /jetpack/connect/store
+		if ( ! this.props.selectedSiteSlug ) {
+			return (
+				description +
+				`The price of this subscription is based on \
+      the number of records you have on your site.`
+			);
 		}
 
 		// Default product description.
@@ -287,7 +296,7 @@ export class ProductSelector extends Component {
 		const { intervalType, storeProducts } = this.props;
 		const productSlugs = product.options[ intervalType ];
 
-		return productSlugs.map( ( productSlug ) => {
+		return productSlugs.map( productSlug => {
 			const productObject = storeProducts[ productSlug ];
 
 			return {
@@ -296,19 +305,19 @@ export class ProductSelector extends Component {
 				fullPrice: this.getProductOptionFullPrice( productSlug ),
 				discountedPrice: this.getProductOptionDiscountedPrice( productSlug ),
 				slug: productSlug,
-				title: this.getProductName( product, productSlug ),
+				title: this.getProductName( product, productSlug )
 			};
 		} );
 	}
 
-	handleCheckoutForProduct = ( productObject ) => {
+	handleCheckoutForProduct = productObject => {
 		const { currentPlanSlug, intervalType, selectedSiteSlug, onUpgradeClick } = this.props;
 
 		return () => {
 			this.props.recordTracksEvent( 'calypso_plan_features_upgrade_click', {
 				current_plan: currentPlanSlug,
 				product_name: productObject.product_slug,
-				billing_cycle: intervalType,
+				billing_cycle: intervalType
 			} );
 			if ( onUpgradeClick ) {
 				onUpgradeClick( productObject );
@@ -318,10 +327,10 @@ export class ProductSelector extends Component {
 		};
 	};
 
-	handleManagePurchase = ( productSlug ) => {
+	handleManagePurchase = productSlug => {
 		return () => {
 			this.props.recordTracksEvent( 'calypso_manage_purchase_click', {
-				slug: productSlug,
+				slug: productSlug
 			} );
 		};
 	};
@@ -343,7 +352,7 @@ export class ProductSelector extends Component {
 		this.setState( {
 			[ stateKey ]: selectedProductSlug,
 			// Also update the selected product option for the other interval type
-			...relatedStateChange,
+			...relatedStateChange
 		} );
 	}
 
@@ -358,8 +367,8 @@ export class ProductSelector extends Component {
 				intro={ this.props.selectedSiteSlug && this.getIntervalDiscount( selectedProductSlug ) }
 				label={ translate( 'Get %(productName)s', {
 					args: {
-						productName: this.getActionButtonName( product, productObject.product_slug ),
-					},
+						productName: this.getActionButtonName( product, productObject.product_slug )
+					}
 				} ) }
 			/>
 		);
@@ -423,7 +432,7 @@ export class ProductSelector extends Component {
 
 		return findKey(
 			productPriceMatrix,
-			( relatedMonthlyProduct ) => relatedMonthlyProduct.relatedProduct === monthlyProductSlug
+			relatedMonthlyProduct => relatedMonthlyProduct.relatedProduct === monthlyProductSlug
 		);
 	}
 
@@ -503,12 +512,12 @@ export class ProductSelector extends Component {
 		return (
 			<ProductCardPromoNudge
 				badgeText={ this.props.translate( 'Up to %(discount)s off!', {
-					args: { discount: '70%' },
+					args: { discount: '70%' }
 				} ) }
 				text={ this.props.translate(
 					'Hurry, these are {{strong}}Limited time introductory prices!{{/strong}}',
 					{
-						components: { strong: <strong /> },
+						components: { strong: <strong /> }
 					}
 				) }
 			/>
@@ -523,17 +532,17 @@ export class ProductSelector extends Component {
 			intervalType,
 			products,
 			selectedSiteSlug,
-			storeProducts,
+			storeProducts
 		} = this.props;
 
 		if ( isEmpty( storeProducts ) || fetchingSitePurchases || fetchingSitePlans || fetchingPlans ) {
-			return map( products, ( product ) => {
+			return map( products, product => {
 				return (
 					<ProductCard
 						key={ product.id }
 						title={ product.title }
 						isPlaceholder={ true }
-						description={ product.description ? product.description : null }
+						description={ product.description ? product.description + 'LL' : null }
 					/>
 				);
 			} );
@@ -541,7 +550,7 @@ export class ProductSelector extends Component {
 
 		const currentPlanInSelectedTimeframe = this.isCurrentPlanInSelectedTimeframe();
 
-		return map( products, ( product ) => {
+		return map( products, product => {
 			const stateKey = this.getStateKey( product.id, intervalType );
 			const selectedSlug = this.state[ stateKey ];
 			const productObject = storeProducts[ selectedSlug ];
@@ -582,7 +591,7 @@ export class ProductSelector extends Component {
 									tracksEventName="calypso_plan_link_click"
 									tracksEventProps={ {
 										link_location: product.link.props.location,
-										link_slug: product.link.props.slug,
+										link_slug: product.link.props.slug
 									} }
 									icon
 								>
@@ -600,34 +609,7 @@ export class ProductSelector extends Component {
 						this.renderManageButton( product, purchase ) }
 					{ ! selectedSiteSlug && product.id === 'jetpack_search' && (
 						<Fragment>
-<<<<<<< HEAD
-							{ product.hasPromo && (
-								<ProductCardPromoNudge
-									badgeText={ translate( 'Up to %(discount)s off!', {
-										args: { discount: '70%' },
-									} ) }
-									text={ translate(
-										'Hurry, these are {{strong}}Limited time introductory prices!{{/strong}}',
-										{
-											components: { strong: <strong /> },
-										}
-									) }
-								/>
-							) }
-
-							<ProductCardOptions
-								optionsLabel={ optionsLabel }
-								options={ this.getProductOptions( product ) }
-								selectedSlug={ selectedSlug }
-								handleSelect={ ( productSlug ) =>
-									this.handleProductOptionSelect( stateKey, productSlug, product.id )
-								}
-								forceRadiosEvenIfOnlyOneOption={ !! product.forceRadios }
-							/>
-
-=======
 							{ product.hasPromo && this.getPromo() }
->>>>>>> Plans: adapt the Search card copy when no site info is present.
 							{ this.renderCheckoutButton( product ) }
 						</Fragment>
 					) }
@@ -699,11 +681,11 @@ const connectComponent = connect(
 			selectedSiteSlug: getSiteSlug( state, selectedSiteId ),
 			storeProducts: isEmpty( availableProducts )
 				? {}
-				: filterByProductSlugs( availableProducts, productSlugs ),
+				: filterByProductSlugs( availableProducts, productSlugs )
 		};
 	},
 	{
-		recordTracksEvent,
+		recordTracksEvent
 	}
 );
 
