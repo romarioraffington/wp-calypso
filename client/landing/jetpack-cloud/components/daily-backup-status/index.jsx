@@ -24,6 +24,7 @@ import { Card } from '@automattic/components';
  * Style dependencies
  */
 import './style.scss';
+import contactSupportUrl from 'landing/jetpack-cloud/lib/contact-support-url';
 
 const INDEX_FORMAT = 'YYYYMMDD';
 
@@ -133,7 +134,7 @@ class DailyBackupStatus extends Component {
 					</p>
 					<Button
 						className="daily-backup-status__support-button"
-						href={ `https://jetpack.com/contact-support/?url=${ siteUrl }` }
+						href={ contactSupportUrl( siteUrl ) }
 						target="_blank"
 						rel="noopener noreferrer"
 						isPrimary={ false }
@@ -164,7 +165,7 @@ class DailyBackupStatus extends Component {
 
 				<Button
 					className="daily-backup-status__support-button"
-					href={ `https://jetpack.com/contact-support/?url=${ siteUrl }` }
+					href={ contactSupportUrl( siteUrl ) }
 					target="_blank"
 					rel="noopener noreferrer"
 					isPrimary={ false }
@@ -215,7 +216,7 @@ class DailyBackupStatus extends Component {
 
 				<Button
 					className="daily-backup-status__support-button"
-					href={ `https://jetpack.com/contact-support/?url=${ siteUrl }` }
+					href={ contactSupportUrl( siteUrl ) }
 					target="_blank"
 					rel="noopener noreferrer"
 					isPrimary={ false }
