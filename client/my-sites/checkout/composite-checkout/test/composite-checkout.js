@@ -19,7 +19,7 @@ import CompositeCheckout from '../composite-checkout';
 import { StripeHookProvider } from 'lib/stripe';
 
 jest.mock( 'page', () => ( {
-	redirect: jest.fn(),
+	redirect: jest.fn()
 } ) );
 
 const domainProduct = {
@@ -32,7 +32,7 @@ const domainProduct = {
 			'https://wordpress.com/automattic-domain-name-registration-agreement/',
 		privacy: true,
 		privacy_available: true,
-		registrar: 'KS_RAM',
+		registrar: 'KS_RAM'
 	},
 	free_trial: false,
 	meta: 'foo.cash',
@@ -40,7 +40,7 @@ const domainProduct = {
 	volume: 1,
 	is_domain_registration: true,
 	item_subtotal_integer: 500,
-	item_subtotal_display: 'R$5',
+	item_subtotal_display: 'R$5'
 };
 
 const domainTransferProduct = {
@@ -53,14 +53,14 @@ const domainTransferProduct = {
 			'https://wordpress.com/automattic-domain-name-registration-agreement/',
 		privacy: true,
 		privacy_available: true,
-		registrar: 'KS_RAM',
+		registrar: 'KS_RAM'
 	},
 	free_trial: false,
 	meta: 'foo.cash',
 	product_id: 106,
 	volume: 1,
 	item_subtotal_integer: 500,
-	item_subtotal_display: 'R$5',
+	item_subtotal_display: 'R$5'
 };
 
 const planWithBundledDomain = {
@@ -69,14 +69,14 @@ const planWithBundledDomain = {
 	currency: 'BRL',
 	extra: {
 		context: 'signup',
-		domain_to_bundle: 'foo.cash',
+		domain_to_bundle: 'foo.cash'
 	},
 	free_trial: false,
 	meta: '',
 	product_id: 1009,
 	volume: 1,
 	item_subtotal_integer: 14400,
-	item_subtotal_display: 'R$144',
+	item_subtotal_display: 'R$144'
 };
 
 const planWithoutDomain = {
@@ -84,20 +84,20 @@ const planWithoutDomain = {
 	product_slug: 'personal-bundle',
 	currency: 'BRL',
 	extra: {
-		context: 'signup',
+		context: 'signup'
 	},
 	free_trial: false,
 	meta: '',
 	product_id: 1009,
 	volume: 1,
 	item_subtotal_integer: 14400,
-	item_subtotal_display: 'R$144',
+	item_subtotal_display: 'R$144'
 };
 
 const fetchStripeConfiguration = async () => {
 	return {
 		public_key: 'abc123',
-		js_url: 'https://js.stripe.com/v3/',
+		js_url: 'https://js.stripe.com/v3/'
 	};
 };
 
@@ -118,7 +118,7 @@ describe( 'CompositeCheckout', () => {
 			products: [ planWithoutDomain ],
 			tax: {
 				display_taxes: true,
-				location: {},
+				location: {}
 			},
 			temporary: false,
 			allowed_payment_methods: [ 'WPCOM_Billing_Stripe_Payment_Method' ],
@@ -128,18 +128,18 @@ describe( 'CompositeCheckout', () => {
 			total_cost_display: 'R$156',
 			sub_total_integer: 15600,
 			sub_total_display: 'R$156',
-			coupon_discounts_integer: [],
+			coupon_discounts_integer: []
 		};
 
 		const countryList = [
 			{
 				code: 'US',
-				name: 'United States',
+				name: 'United States'
 			},
 			{
 				code: 'AU',
-				name: 'Australia',
-			},
+				name: 'Australia'
+			}
 		];
 
 		const store = applyMiddleware( thunk )( createStore )( () => {
@@ -154,9 +154,9 @@ describe( 'CompositeCheckout', () => {
 							path_slug: 'personal',
 							product_slug: 'personal-bundle',
 							product_type: 'bundle',
-							currency_code: 'USD',
-						},
-					],
+							currency_code: 'USD'
+						}
+					]
 				},
 				sites: { items: {} },
 				ui: { selectedSiteId: 123 },
@@ -166,23 +166,23 @@ describe( 'CompositeCheckout', () => {
 							product_id: 1009,
 							product_name: 'Plan',
 							product_slug: 'personal-bundle',
-							prices: {},
+							prices: {}
 						},
 						domain_map: {
 							product_id: 5,
 							product_name: 'Product',
 							product_slug: 'domain_map',
-							prices: {},
+							prices: {}
 						},
 						domain_reg: {
 							product_id: 6,
 							product_name: 'Product',
 							product_slug: 'domain_reg',
-							prices: {},
-						},
-					},
+							prices: {}
+						}
+					}
 				},
-				countries: { payments: countryList, domains: countryList },
+				countries: { payments: countryList, domains: countryList }
 			};
 		} );
 
@@ -215,7 +215,7 @@ describe( 'CompositeCheckout', () => {
 			renderResult = render( <MyCheckout />, container );
 		} );
 		const { getAllByLabelText } = renderResult;
-		getAllByLabelText( 'WordPress.com Personal' ).map( ( element ) =>
+		getAllByLabelText( 'WordPress.com Personal' ).map( element =>
 			expect( element ).toHaveTextContent( 'R$144' )
 		);
 	} );
@@ -226,7 +226,7 @@ describe( 'CompositeCheckout', () => {
 			renderResult = render( <MyCheckout />, container );
 		} );
 		const { getAllByLabelText } = renderResult;
-		getAllByLabelText( 'Tax' ).map( ( element ) => expect( element ).toHaveTextContent( 'R$7' ) );
+		getAllByLabelText( 'Tax' ).map( element => expect( element ).toHaveTextContent( 'R$7' ) );
 	} );
 
 	it( 'renders the total amount', async () => {
@@ -235,9 +235,7 @@ describe( 'CompositeCheckout', () => {
 			renderResult = render( <MyCheckout />, container );
 		} );
 		const { getAllByLabelText } = renderResult;
-		getAllByLabelText( 'Total' ).map( ( element ) =>
-			expect( element ).toHaveTextContent( 'R$156' )
-		);
+		getAllByLabelText( 'Total' ).map( element => expect( element ).toHaveTextContent( 'R$156' ) );
 	} );
 
 	it( 'renders the paypal payment method option', async () => {
@@ -323,7 +321,7 @@ describe( 'CompositeCheckout', () => {
 			total_cost_integer: 0,
 			total_cost_display: '0',
 			credits_integer: 15600,
-			credits_display: 'R$156',
+			credits_display: 'R$156'
 		};
 		await act( async () => {
 			renderResult = render( <MyCheckout cartChanges={ cartChanges } />, container );
@@ -431,13 +429,13 @@ describe( 'CompositeCheckout', () => {
 		expect( getByText( 'ZIP code' ) ).toBeInTheDocument();
 	} );
 
-	it( 'renders the checkout greeting header', async () => {
+	it( 'renders the checkout summary', async () => {
 		let renderResult;
 		await act( async () => {
 			renderResult = render( <MyCheckout />, container );
 		} );
 		const { getByText } = renderResult;
-		expect( getByText( 'You are all set to check out' ) ).toBeInTheDocument();
+		expect( getByText( 'Purchase Details' ) ).toBeInTheDocument();
 		expect( page.redirect ).not.toHaveBeenCalled();
 	} );
 
@@ -472,7 +470,7 @@ describe( 'CompositeCheckout', () => {
 			);
 		} );
 		const { getAllByLabelText } = renderResult;
-		getAllByLabelText( 'WordPress.com Personal' ).map( ( element ) =>
+		getAllByLabelText( 'WordPress.com Personal' ).map( element =>
 			expect( element ).toHaveTextContent( 'R$144' )
 		);
 	} );
@@ -500,10 +498,10 @@ describe( 'CompositeCheckout', () => {
 			);
 		} );
 		const { getAllByLabelText } = renderResult;
-		getAllByLabelText( 'WordPress.com Personal' ).map( ( element ) =>
+		getAllByLabelText( 'WordPress.com Personal' ).map( element =>
 			expect( element ).toHaveTextContent( 'R$144' )
 		);
-		getAllByLabelText( 'Domain Mapping: bar.com' ).map( ( element ) =>
+		getAllByLabelText( 'Domain Mapping: bar.com' ).map( element =>
 			expect( element ).toHaveTextContent( 'R$0' )
 		);
 	} );
@@ -519,7 +517,7 @@ describe( 'CompositeCheckout', () => {
 			);
 		} );
 		const { getAllByLabelText } = renderResult;
-		getAllByLabelText( 'WordPress.com Personal' ).map( ( element ) =>
+		getAllByLabelText( 'WordPress.com Personal' ).map( element =>
 			expect( element ).toHaveTextContent( 'R$144' )
 		);
 	} );
@@ -557,7 +555,7 @@ describe( 'CompositeCheckout', () => {
 		const cartChanges = { products: [] };
 		const additionalProps = {
 			product: 'domain_map:bar.com,domain_reg:bar.com',
-			purchaseId: '12345,54321',
+			purchaseId: '12345,54321'
 		};
 		await act( async () => {
 			renderResult = render(
@@ -581,10 +579,10 @@ describe( 'CompositeCheckout', () => {
 			);
 		} );
 		const { getAllByLabelText } = renderResult;
-		getAllByLabelText( 'WordPress.com Personal' ).map( ( element ) =>
+		getAllByLabelText( 'WordPress.com Personal' ).map( element =>
 			expect( element ).toHaveTextContent( 'R$144' )
 		);
-		getAllByLabelText( 'Coupon: MYCOUPONCODE' ).map( ( element ) =>
+		getAllByLabelText( 'Coupon: MYCOUPONCODE' ).map( element =>
 			expect( element ).toHaveTextContent( '-$0' )
 		);
 	} );
@@ -592,7 +590,7 @@ describe( 'CompositeCheckout', () => {
 	it( 'displays loading while old cart store is loading', async () => {
 		let renderResult;
 		const additionalProps = {
-			cart: { hasLoadedFromServer: false, hasPendingServerUpdates: false },
+			cart: { hasLoadedFromServer: false, hasPendingServerUpdates: false }
 		};
 		await act( async () => {
 			renderResult = render( <MyCheckout additionalProps={ additionalProps } />, container );
@@ -631,7 +629,7 @@ async function mockSetCartEndpoint( _, requestCart ) {
 		products: requestProducts,
 		currency: requestCurrency,
 		coupon: requestCoupon,
-		locale: requestLocale,
+		locale: requestLocale
 	} = requestCart;
 	const products = requestProducts.map( convertRequestProductToResponseProduct( requestCurrency ) );
 
@@ -652,7 +650,7 @@ async function mockSetCartEndpoint( _, requestCart ) {
 		allowed_payment_methods: [
 			'WPCOM_Billing_Stripe_Payment_Method',
 			'WPCOM_Billing_Ebanx',
-			'WPCOM_Billing_Web_Payment',
+			'WPCOM_Billing_Web_Payment'
 		],
 		total_tax_display: 'R$7',
 		total_tax_integer: taxInteger,
@@ -663,12 +661,12 @@ async function mockSetCartEndpoint( _, requestCart ) {
 		coupon: requestCoupon,
 		is_coupon_applied: true,
 		coupon_discounts_integer: [],
-		tax: {},
+		tax: {}
 	};
 }
 
 function convertRequestProductToResponseProduct( currency ) {
-	return ( product ) => {
+	return product => {
 		const { product_id } = product;
 
 		switch ( product_id ) {
@@ -684,7 +682,7 @@ function convertRequestProductToResponseProduct( currency ) {
 					item_tax: 0,
 					meta: product.meta,
 					volume: 1,
-					extra: {},
+					extra: {}
 				};
 			case 5:
 				return {
@@ -698,7 +696,7 @@ function convertRequestProductToResponseProduct( currency ) {
 					item_tax: 0,
 					meta: product.meta,
 					volume: 1,
-					extra: {},
+					extra: {}
 				};
 			case 6:
 				return {
@@ -712,7 +710,7 @@ function convertRequestProductToResponseProduct( currency ) {
 					item_tax: 0,
 					meta: product.meta,
 					volume: 1,
-					extra: {},
+					extra: {}
 				};
 		}
 
@@ -724,7 +722,7 @@ function convertRequestProductToResponseProduct( currency ) {
 			is_domain_registration: false,
 			item_subtotal_integer: 0,
 			item_subtotal_display: '$0',
-			item_tax: 0,
+			item_tax: 0
 		};
 	};
 }
