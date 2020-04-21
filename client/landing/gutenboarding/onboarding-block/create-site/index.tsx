@@ -64,6 +64,13 @@ const CreateSite: React.FunctionComponent = () => {
 		}
 	}, [ isComplete ] );
 
+	// Force animated progress bar to start at 0
+	const [ hasStarted, setHasStarted ] = React.useState( false );
+	React.useEffect( () => {
+		const id = setTimeout( () => setHasStarted( true ), 750 );
+		return () => clearTimeout( id );
+	}, [] );
+
 	return (
 		<div className="gutenboarding-page create-site__background">
 			{ shouldTriggerCreate && shouldCreateAndRedirect && <CreateAndRedirect /> }
@@ -83,7 +90,7 @@ const CreateSite: React.FunctionComponent = () => {
 						className="create-site__progress-bar"
 						style={
 							{
-								'--progress': progress,
+								'--progress': ! hasStarted ? 0 : progress,
 							} as React.CSSProperties
 						}
 					/>
