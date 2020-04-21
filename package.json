@@ -240,7 +240,7 @@
 		"@wordpress/url": "2.12.0",
 		"@wordpress/viewport": "2.14.0",
 		"acorn": "6.4.1",
-		"babel-eslint": "10.0.3",
+		"babel-eslint": "10.1.0",
 		"babel-jest": "25.1.0",
 		"babel-plugin-add-module-exports": "1.0.2",
 		"babel-plugin-dynamic-import-node": "2.3.0",
