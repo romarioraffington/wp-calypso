@@ -5,6 +5,7 @@ import * as React from 'react';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@automattic/react-i18n';
 import { Icon } from '@wordpress/components';
+import { useSelect } from '@wordpress/data';
 import { useInterval } from '../../../../lib/interval/use-interval';
 
 /**
@@ -12,6 +13,7 @@ import { useInterval } from '../../../../lib/interval/use-interval';
  */
 import CreateAndRedirect from './create-and-redirect';
 import { useNewQueryParam } from '../../path';
+import { STORE_KEY } from '../../stores/onboard';
 import './style.scss';
 
 // Total time to perform "loading"
@@ -22,11 +24,23 @@ const CreateSite: React.FunctionComponent = () => {
 	const { __ } = useI18n();
 	const shouldTriggerCreate = useNewQueryParam();
 	const [ shouldCreateAndRedirect, setCreateAndRedirect ] = React.useState( false );
+	const hasPaidDomain: boolean = useSelect( ( select ) => {
+		const domain = select( STORE_KEY ).getState().domain;
+
+		// No domain is not paid
+		if ( ! domain ) {
+			return false;
+		}
+
+		return ! domain.is_free;
+	} );
 
 	const steps = React.useRef< string[] >(
-		[ __( 'Building your site' ), __( 'Getting your domain' ), __( 'Applying design' ) ].filter(
-			Boolean
-		) as string[]
+		[
+			__( 'Building your site' ),
+			hasPaidDomain && __( 'Getting your domain' ),
+			__( 'Applying design' ),
+		].filter( Boolean ) as string[]
 	);
 	const totalSteps = steps.current.length;
 
